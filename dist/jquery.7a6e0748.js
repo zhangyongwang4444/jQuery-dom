@@ -113,17 +113,61 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
-window.jQuery = function (selectorOrArray) {
+window.jQuery = function (selectorOrArrayOrTemplate) {
   var elements = null;
 
-  if (typeof selectorOrArray === 'string') {
-    elements = document.querySelectorAll(selectorOrArray);
-  } else if (selectorOrArray instanceof Array) {
-    elements = selectorOrArray;
+  if (typeof selectorOrArrayOrTemplate === 'string') {
+    if (selectorOrArrayOrTemplate[0] === '<') {
+      //创建
+      elements = [createElement(selectorOrArrayOrTemplate)];
+    } else {
+      // 查找
+      elements = document.querySelectorAll(selectorOrArrayOrTemplate);
+    }
+  } else if (selectorOrArrayOrTemplate instanceof Array) {
+    elements = selectorOrArrayOrTemplate;
+  }
+
+  function createElement(string) {
+    var container = document.createElement('template');
+    container.innerHTML = string.trim(); // 去掉字符串两端的空格
+
+    return container.content.firstChild;
   } // api 可以操作 elements
 
 
   return {
+    jquery: true,
+    elements: elements,
+    get: function get(index) {
+      return elements[index];
+    },
+    appendTo: function appendTo(node) {
+      if (node instanceof Element) {
+        this.each(function (el) {
+          return node.appendChild(el);
+        });
+      } else if (node.jquery === true) {
+        this.each(function (el) {
+          return node.get(0).appendChild(el);
+        });
+      }
+    },
+    append: function append(children) {
+      var _this = this;
+
+      if (children instanceof Element) {
+        this.get(0).appendChild(children);
+      } else if (children instanceof HTMLCollection) {
+        for (var i = 0; i < children.length; i++) {
+          this.get(0).appendChild(children[i]);
+        }
+      } else if (children.jquery === true) {
+        children.each(function (node) {
+          return _this.get(0).appendChild(node);
+        });
+      }
+    },
     find: function find(selector) {
       var array = [];
 
@@ -171,12 +215,14 @@ window.jQuery = function (selectorOrArray) {
 
       return this;
     },
-    oldApi: selectorOrArray.oldApi,
+    oldApi: selectorOrArrayOrTemplate.oldApi,
     end: function end() {
       return this.oldApi; // this 就是当前的 api 
     }
   };
 };
+
+window.$ = window.jQuery;
 },{}],"C:/Users/34936/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';

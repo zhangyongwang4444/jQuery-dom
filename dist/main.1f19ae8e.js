@@ -105,8 +105,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   // Override the current require with this new one
   return newRequire;
 })({"main.js":[function(require,module,exports) {
-var x = jQuery('.test');
-x.children().print();
+var $div = $('<div><span>1</span></div>');
+var $childList = $('.child');
+$('body').append($childList);
 },{}],"C:/Users/34936/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
