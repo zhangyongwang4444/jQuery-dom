@@ -27,10 +27,10 @@ window.$ = window.jQuery = function (selectorOrArrayOrTemplate) {
 }
 
 jQuery.prototype = {
-    // constructor: jQuery
+    constructor: jQuery,
     jquery: true,
     get(index) {
-        return elements[index]
+        return this.elements[index]
     },
     appendTo(node) {
         if (node instanceof Element) {
